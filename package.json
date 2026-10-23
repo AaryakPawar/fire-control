@@ -1,0 +1,14 @@
+
+{
+  "name": "firecontrol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:contracts": "node --test contracts/firewatch/*.test.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}
