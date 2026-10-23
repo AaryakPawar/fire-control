@@ -1,0 +1,39 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FireSim CommandStatus",
+  "description": "Assumed status interface for FireSim command responses received by FireControl.",
+  "type": "object",
+  "required": [
+    "requestId",
+    "state",
+    "occurredAt"
+  ],
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier linking the status to its original CommandRequest."
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "REJECTED",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED"
+      ],
+      "description": "Assumed command acknowledgment or execution state."
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the status event."
+    },
+    "message": {
+      "type": "string",
+      "description": "Optional status details or rejection reason."
+    }
+  }
+}

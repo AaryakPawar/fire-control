@@ -1,0 +1,7 @@
+
+{
+  "requestId": "REQ-DEMO-001",
+  "state": "ACCEPTED",
+  "occurredAt": "2026-10-23T12:01:00Z",
+  "message": "Command received and accepted by FireSim."
+}

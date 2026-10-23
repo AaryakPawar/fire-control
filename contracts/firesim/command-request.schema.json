@@ -1,0 +1,56 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FireSim CommandRequest",
+  "description": "Assumed interface for commands submitted by FireControl to FireSim.",
+  "type": "object",
+  "required": [
+    "requestId",
+    "commandId",
+    "planId",
+    "planRevision",
+    "incidentId",
+    "actionType",
+    "zoneId",
+    "resourceId",
+    "priority"
+  ],
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "commandId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "planId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "planRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "incidentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actionType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "zoneId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resourceId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "priority": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

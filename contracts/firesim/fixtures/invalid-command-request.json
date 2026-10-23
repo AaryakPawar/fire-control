@@ -1,0 +1,11 @@
+
+{
+  "requestId": "REQ-DEMO-INVALID-001",
+  "commandId": "CMD-DEMO-INVALID-001",
+  "planId": "PLAN-DEMO-001",
+  "planRevision": 1,
+  "incidentId": "INC-DEMO-001",
+  "actionType": "DEPLOY_RESOURCE",
+  "zoneId": "ZONE-001",
+  "priority": "HIGH"
+}
