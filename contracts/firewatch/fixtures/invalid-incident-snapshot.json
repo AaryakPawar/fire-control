@@ -1,0 +1,11 @@
+
+{
+  "snapshotId": "SNAP-DEMO-INVALID-001",
+  "observedAt": "2026-10-23T12:00:00Z",
+  "severity": "HIGH",
+  "zones": [
+    {
+      "zoneId": "ZONE-001"
+    }
+  ]
+}
