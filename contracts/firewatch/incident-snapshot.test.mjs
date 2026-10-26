@@ -1,9 +1,54 @@
 
-/*
- * Additional negative contract tests.
- * Each case starts with a valid IncidentSnapshot
- * and changes one field to verify rejection.
- */
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
+
+// Load JSON relative to this test file.
+function loadJSON(relativePath) {
+  const fileURL = new URL(relativePath, import.meta.url);
+  return JSON.parse(readFileSync(fileURL, "utf8"));
+}
+
+// Configure the FireWatch JSON Schema validator.
+const schema = loadJSON("./incident-snapshot.schema.json");
+
+const ajv = new Ajv2020({ allErrors: true });
+addFormats(ajv);
+
+const validate = ajv.compile(schema);
+
+// Original test 1: Valid snapshot.
+test("accepts a valid FireWatch IncidentSnapshot", () => {
+  const snapshot = loadJSON(
+    "./fixtures/valid-incident-snapshot.json"
+  );
+
+  const result = validate(snapshot);
+
+  assert.equal(result, true, JSON.stringify(validate.errors));
+});
+
+// Original test 2: Missing incidentId.
+test("rejects an IncidentSnapshot without incidentId", () => {
+  const snapshot = loadJSON(
+    "./fixtures/invalid-incident-snapshot.json"
+  );
+
+  assert.equal(validate(snapshot), false);
+
+  assert.ok(
+    validate.errors.some(
+      (error) =>
+        error.keyword === "required" &&
+        error.params.missingProperty === "incidentId"
+    ),
+    "Expected a missing incidentId validation error"
+  );
+});
+
+// Additional negative tests requested during peer review.
 const invalidCases = [
   {
     name: "missing snapshotId",
@@ -81,7 +126,7 @@ for (const testCase of invalidCases) {
 
     assert.ok(
       matchingError,
-      `Expected ${testCase.keyword} error for ${testCase.name}: ` +
+      `Expected ${testCase.keyword} error: ` +
         JSON.stringify(validate.errors)
     );
   });
