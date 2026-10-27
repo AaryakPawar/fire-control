@@ -1,0 +1,61 @@
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FireWatch IncidentSnapshot",
+  "description": "Proposed incident snapshot contract for FireControl integration with FireWatch.",
+  "type": "object",
+  "required": [
+    "snapshotId",
+    "incidentId",
+    "observedAt",
+    "severity",
+    "zones"
+  ],
+  "properties": {
+    "snapshotId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this snapshot."
+    },
+    "incidentId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the wildfire incident."
+    },
+    "observedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time when FireWatch observed the incident."
+    },
+    "severity": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Severity reported by FireWatch."
+    },
+    "zones": {
+      "type": "array",
+      "description": "Affected wildfire zones.",
+      "items": {
+        "type": "object",
+        "required": ["zoneId"],
+        "properties": {
+          "zoneId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "weather": {
+      "type": "object",
+      "description": "Optional weather information."
+    },
+    "resources": {
+      "type": "array",
+      "description": "Optional available resources.",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}
