@@ -1,0 +1,7 @@
+
+{
+  "requestId": "REQ-DEMO-001",
+  "state": "SUCCESS",
+  "occurredAt": "2026-10-23T12:02:00Z",
+  "message": "Intentionally invalid status for contract validation."
+}
