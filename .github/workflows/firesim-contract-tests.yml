@@ -1,0 +1,32 @@
+
+name: FireSim Contract Tests
+
+on:
+  push:
+    branches:
+      - feature/firesim-contract
+  pull_request:
+    paths:
+      - "contracts/firesim/**"
+      - ".github/workflows/firesim-contract-tests.yml"
+
+jobs:
+  test-firesim-contracts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install validation dependencies
+        run: |
+          if [ ! -f package.json ]; then npm init -y; fi
+          npm install --no-save --no-package-lock ajv@8.17.1 ajv-formats@3.0.1
+
+      - name: Run FireSim contract tests
+        run: node --test contracts/firesim/firesim-contract.test.mjs
