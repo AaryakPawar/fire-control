@@ -1,0 +1,25 @@
+
+{
+  "snapshotId": "SNAP-DEMO-001",
+  "incidentId": "INC-DEMO-001",
+  "observedAt": "2026-10-23T12:00:00Z",
+  "severity": "HIGH",
+  "zones": [
+    {
+      "zoneId": "ZONE-001"
+    },
+    {
+      "zoneId": "ZONE-002"
+    }
+  ],
+  "weather": {
+    "temperatureC": 32,
+    "windSpeedKph": 25
+  },
+  "resources": [
+    {
+      "resourceId": "RES-001",
+      "type": "FIRE_ENGINE"
+    }
+  ]
+}
