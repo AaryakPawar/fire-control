@@ -1,18 +1,14 @@
- feature/mock-integrations
 
- main
 {
   "name": "firecontrol",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
- feature/mock-integrations
     "test:contracts": "node --test contracts/firewatch/*.test.mjs",
     "test:integrations": "node --test src/integrations/*.test.mjs"
 
-    "test:contracts": "node --test contracts/firewatch/*.test.mjs"
- main
+  
   },
   "devDependencies": {
     "ajv": "^8.17.1",
