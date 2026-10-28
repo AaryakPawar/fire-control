@@ -27,3 +27,18 @@ teammate branches. Keep the local schema paths in the tests.
 
 `test:contracts` is inherited from the FireWatch package and runs its own tests
 only when those contract files are present. Use `test:integrations` for this work.
+
+## Runtime FireWatch intake validation
+
+`MockFireWatchAdapter.getIncidentSnapshot()` validates the parsed payload against
+the local FireWatch schema before checking the incident identifier or returning
+data. Schema failures throw `IncidentSnapshotValidationError` with code
+`INVALID_INCIDENT_SNAPSHOT` and a copied Ajv `errors` array (including keyword,
+instance path and parameters). Unknown incidents return null only after payload
+validation. The optional `snapshotFile` constructor setting permits isolated
+fixture-based tests; the default fixture is unchanged.
+
+The shared `validateIncidentSnapshot` function is available for future real
+adapters; this change does not implement a real FireWatch transport. The schema
+remains provisional as documented in CONTRACT_ASSUMPTIONS.md. File I/O and JSON
+syntax errors retain their native errors. Ajv packages are runtime dependencies.
