@@ -1,52 +1,36 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import { MockFireWatchAdapter } from "./mock-firewatch-adapter.mjs";
 import { MockFireSimAdapter } from "./mock-firesim-adapter.mjs";
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
 const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 
-// Prefer merged contracts; until then read their owners' branches directly.
-function loadValidator(path, ref) {
+// Validate against schemas from this checkout, never another branch.
+function loadValidator(path) {
   const local = new URL(`../../${path}`, import.meta.url);
   let content;
   try {
     content = readFileSync(local, "utf8");
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-    try {
-      content = execFileSync("git", ["show", `${ref}:${path}`], {
-        cwd: root,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"]
-      });
-    } catch (cause) {
-      throw new Error(
-        `Cannot load ${path} from ${ref}. Fetch the contract branches as documented in src/integrations/README.md.`,
-        { cause }
-      );
-    }
+  } catch (cause) {
+    throw new Error(`Cannot load required schema from this checkout: ${path}`, {
+      cause
+    });
   }
   return ajv.compile(JSON.parse(content));
 }
 
 const validateSnapshot = loadValidator(
-  "contracts/firewatch/incident-snapshot.schema.json",
-  "origin/feature/firewatch-contract"
+  "contracts/firewatch/incident-snapshot.schema.json"
 );
 const validateRequest = loadValidator(
-  "contracts/firesim/command-request.schema.json",
-  "origin/feature/firesim-contract"
+  "contracts/firesim/command-request.schema.json"
 );
 const validateStatus = loadValidator(
-  "contracts/firesim/command-status.schema.json",
-  "origin/feature/firesim-contract"
+  "contracts/firesim/command-status.schema.json"
 );
 
 function loadFixture(name) {

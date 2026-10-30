@@ -15,6 +15,35 @@ https://github.com/AaryakPawar/fire-control
 
 ---
 
+## Reproducible verification
+
+Use Node.js 22, matching CI. From a fresh checkout:
+
+```sh
+npm ci
+npm test
+```
+
+`npm test` runs FireWatch contract tests, FireSim contract tests, and mock
+integration tests in one command. The main-branch and pull-request CI job
+**FireWatch and FireSim Tests** runs the same `npm ci` and `npm test` commands
+against the checkout under test. No feature-branch refs or fetches are required.
+See [verification details](src/integrations/README.md) for focused suite commands.
+
+Recorded evidence (October 30, 2026; commit-specific, not a current-main claim):
+
+| Baseline | Verified scope |
+| --- | --- |
+| Main `3739515` | 44 passing tests: 10 FireWatch + 4 FireSim + 30 integration. Runtime intake schema enforcement missing. |
+| Separate PR [#29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9` | 49 passing tests, including five provisional runtime intake regressions. Unmerged at this evidence cutoff. |
+| Actual FireWatch compatibility | Still unverified. Passing provisional contract/mock tests does not prove upstream compatibility. |
+
+This verification change unifies the command and CI scope; it does not merge
+PR #29 or implement live integration. Test totals depend on the checked-out
+revision and should be reported with its commit ID.
+
+---
+
 ## Motivation / Concept
 
 **FireControl** is Team FireControl's proposed command, planning, and response-coordination subsystem for the larger **Fire Force Six** system-of-systems.

@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test contracts/firewatch/*.test.mjs contracts/firesim/*.test.mjs src/integrations/*.test.mjs",
     "test:contracts": "node --test contracts/firewatch/*.test.mjs",
+    "test:contracts:firesim": "node --test contracts/firesim/*.test.mjs",
     "test:integrations": "node --test src/integrations/*.test.mjs"
-
-
   },
   "devDependencies": {
     "ajv": "^8.17.1",
