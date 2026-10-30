@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { validateIncidentSnapshot } from "./incident-snapshot-validator.mjs";
 
 const SNAPSHOT_FILE = new URL(
   "./fixtures/firewatch-incident.json",
@@ -6,12 +7,13 @@ const SNAPSHOT_FILE = new URL(
 );
 
 export class MockFireWatchAdapter {
-  constructor({ scenario = "success" } = {}) {
+  constructor({ scenario = "success", snapshotFile = SNAPSHOT_FILE } = {}) {
     if (!["success", "unavailable"].includes(scenario)) {
       throw new Error("Unsupported FireWatch mock scenario");
     }
 
     this.scenario = scenario;
+    this.snapshotFile = snapshotFile;
   }
 
   async getIncidentSnapshot(incidentId) {
@@ -27,8 +29,8 @@ export class MockFireWatchAdapter {
       );
     }
 
-    const content = await readFile(SNAPSHOT_FILE, "utf8");
-    const snapshot = JSON.parse(content);
+    const content = await readFile(this.snapshotFile, "utf8");
+    const snapshot = validateIncidentSnapshot(JSON.parse(content));
 
     if (snapshot.incidentId !== incidentId) {
       return null;
