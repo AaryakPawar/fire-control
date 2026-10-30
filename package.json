@@ -9,7 +9,7 @@
     "test:contracts:firesim": "node --test contracts/firesim/*.test.mjs",
     "test:integrations": "node --test src/integrations/*.test.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   }

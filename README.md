@@ -17,12 +17,7 @@ https://github.com/AaryakPawar/fire-control
 
 ## Reproducible verification
 
-**Candidate branch notice:** this README includes the verification change in
-[PR #30](https://github.com/AaryakPawar/fire-control/pull/30). It describes that
-branch until the PR merges. Main remains at the separately recorded baseline
-below; the new combined main-branch check is not yet active there.
-
-Use Node.js 22, matching CI. From a fresh checkout of the candidate branch:
+Use Node.js 22, matching CI. From a fresh checkout of this revision:
 
 ```sh
 npm ci
@@ -30,24 +25,25 @@ npm test
 ```
 
 `npm test` runs FireWatch contract tests, FireSim contract tests, and mock
-integration tests in one command. In PR #30, the **FireWatch and FireSim Tests**
-job runs the same `npm ci` and `npm test` commands on pull requests and is
-configured for pushes to main after merge. No feature-branch refs or fetches
-are required by this candidate verification path.
+integration tests in one command. The **FireWatch and FireSim Tests** job uses
+the same `npm ci` and `npm test` commands on pull requests and pushes to main.
+No feature-branch refs or fetches are required.
 See [verification details](src/integrations/README.md) for focused suite commands.
 
-Recorded evidence (October 30, 2026; commit-specific, not a current-main claim):
+Recorded evidence (October 30, 2026; commit-specific baselines):
 
 | Baseline | Verified scope |
 | --- | --- |
-| Main `3739515` | 44 passing tests: 10 FireWatch + 4 FireSim + 30 integration. Runtime intake schema enforcement missing. |
-| Separate PR [#29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9` | Open and unmerged, without a submitted review. 49 passing tests include five provisional runtime intake regressions. |
-| Verification PR [#30](https://github.com/AaryakPawar/fire-control/pull/30), verification implementation `db174df` | Open and unmerged. 44 tests pass with `npm ci` / `npm test` on Node 22; all three PR checks pass. Its main CI activation awaits merge. |
+| Historical main `3739515` | 44 passing tests: 10 FireWatch + 4 FireSim + 30 integration. Runtime intake schema enforcement was missing. |
+| Runtime intake repair [#29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9`, merged as `d2e0df7` | 49 passing tests include five provisional runtime intake regressions. Jamal submitted a positive `COMMENTED` review on that PR head before merge. |
+| Verification [#30](https://github.com/AaryakPawar/fire-control/pull/30), including the #29 repair | A clean source copy without Git metadata passes `npm ci` / `npm test` on Node 22: 49 tests (10 FireWatch + 4 FireSim + 35 integration). |
 | Actual FireWatch compatibility | Still unverified. Passing provisional contract/mock tests does not prove upstream compatibility. |
 
-This verification change unifies the command and CI scope; it does not merge
-PR #29 or implement live integration. Test totals depend on the checked-out
-revision and should be reported with its commit ID.
+The verification change unifies the command and CI scope. It includes the
+runtime repair from merged PR #29 and does not implement live integration.
+The original #30 implementation `db174df` passed 44 tests before that repair was
+included. Test totals depend on the checked-out revision. See the PR and main
+commit checks for their current CI results.
 
 ---
 
@@ -335,34 +331,37 @@ Both team members will contribute to:
 contract/mock implementation progress. Status snapshot: October 30, 2026.
 These are source and process observations, not overall product completion.
 
-### Implemented on main
+### Implemented integration foundation
 
-Main `3739515` contains the merged FireWatch/FireSim schemas, fixtures and mock
-adapters from PRs #26–#28. The combined local baseline has **44 passing tests**
-(10 FireWatch, 4 FireSim, 30 integration). Main still lacks runtime FireWatch
-intake schema enforcement. A passing standalone schema test does not establish
-validation at the adapter boundary.
+PRs #26–#29 are merged. The main baseline after #29, `d2e0df7`, contains the
+provisional FireWatch/FireSim schemas, fixtures, mock adapters and runtime
+validation of provisional incident snapshots. Malformed intake now throws
+structured schema-validation errors at the adapter boundary. The complete
+combined verification revision has **49 passing tests** (10 FireWatch, 4 FireSim,
+35 integration), including five intake regressions.
 
-### Open changes and limitations
+[PR #30](https://github.com/AaryakPawar/fire-control/pull/30) supplies this
+revision's combined `npm test` command, local-only schema loading and lockfile
+installation in CI. Jamal left positive peer discussion on its earlier head
+`f133122`; the later update incorporates reviewed #29 and resolves documentation
+overlap. PR and main check results remain separately visible on GitHub.
 
-- [PR #29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9`: runtime
-  validation against the provisional internal model and five adapter-intake
-  regressions; **49 tests pass on that branch**. It is open, unmerged and without
-  a submitted review at this cutoff.
-- [PR #30](https://github.com/AaryakPawar/fire-control/pull/30), verification implementation
-  `db174df`: combined verification command and reproducible CI installation;
-  **44 tests and all three PR checks pass**. It remains open and unmerged. This
-  candidate README update does not make the workflow active on main.
+### Remaining work and limits
+
+- Issue #11 remains Open / In Review pending explicit story acceptance and a
+  closure decision after merged verification. Its runtime repair is merged.
 - Operator UI, plan editing, business validation/approval, durable submission,
   persistence/audit and live integrations remain proposed or backlog work.
 - Actual FireWatch and FireSim compatibility remains unverified. Mock behavior
   does not demonstrate deployment or completion of the operator workflow.
+- A merge records integration into main. It does not establish missing peer
+  review: PR #27 remains merged without recorded review evidence.
 
 ### Story acceptance and Scrum state
 
 | Story | State | Acceptance basis / remaining work |
 | --- | --- | --- |
-| [#11 — FireWatch intake](https://github.com/AaryakPawar/fire-control/issues/11) | Open / In Review | Reopened while #29's runtime repair, review, merged verification and explicit acceptance remain pending. |
+| [#11 — FireWatch intake](https://github.com/AaryakPawar/fire-control/issues/11) | Open / In Review | Runtime repair #29 is merged; provisional intake tests pass. Explicit story acceptance and closure remain pending. |
 | [#12 — FireSim contracts](https://github.com/AaryakPawar/fire-control/issues/12) | Closed / Done | Acceptance recorded against its six contract-story criteria: request/status definitions, required fields/enums/correlation, identifiable validation errors, valid/invalid fixtures and standalone testing. |
 | [#13 — Mock integrations](https://github.com/AaryakPawar/fire-control/issues/13) | Closed / Done | Completed mock foundation via merged #28; interface-neutral demo progression remains follow-up work. |
 

@@ -27,8 +27,24 @@ broker, database, or live peer service are needed to run the suites after
 installing dependencies. Dependency installation requires registry access or a
 populated npm cache.
 
+With the runtime intake repair from merged PR #29, the complete command covers
+49 tests: 10 FireWatch contract, 4 FireSim contract and 35 integration tests.
 These tests cover provisional FireControl contract/mock behavior, including
-schema failures and command response lifecycles. They do not establish actual
-FireWatch v1.0.0 compatibility, a running operator application, or live FireSim
-integration. Runtime intake validation in PR #29 remains a separate change
-until merged; this verification change does not add its five regression tests.
+schema failures and command response lifecycles. Actual FireWatch v1.0.0
+compatibility, a running operator application and live FireSim integration
+remain unverified.
+
+## Runtime FireWatch intake validation
+
+`MockFireWatchAdapter.getIncidentSnapshot()` validates the parsed payload against
+the local FireWatch schema before checking the incident identifier or returning
+data. Schema failures throw `IncidentSnapshotValidationError` with code
+`INVALID_INCIDENT_SNAPSHOT` and a copied Ajv `errors` array (including keyword,
+instance path and parameters). Unknown incidents return null only after payload
+validation. The optional `snapshotFile` constructor setting permits isolated
+fixture-based tests; the default fixture is unchanged.
+
+The shared `validateIncidentSnapshot` function is available for future real
+adapters; this change does not implement a real FireWatch transport. The schema
+remains provisional as documented in CONTRACT_ASSUMPTIONS.md. File I/O and JSON
+syntax errors retain their native errors. Ajv packages are runtime dependencies.
