@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - feature/mock-integrations
 permissions:
   contents: read
 
@@ -24,14 +23,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Fetch teammate contract branches
-        run: |
-          git fetch --no-tags origin \
-            +refs/heads/feature/firewatch-contract:refs/remotes/origin/feature/firewatch-contract \
-            +refs/heads/feature/firesim-contract:refs/remotes/origin/feature/firesim-contract
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Run integration tests
-        run: npm run test:integrations
+      - name: Run all contract and integration tests
+        run: npm test
