@@ -17,7 +17,12 @@ https://github.com/AaryakPawar/fire-control
 
 ## Reproducible verification
 
-Use Node.js 22, matching CI. From a fresh checkout:
+**Candidate branch notice:** this README includes the verification change in
+[PR #30](https://github.com/AaryakPawar/fire-control/pull/30). It describes that
+branch until the PR merges. Main remains at the separately recorded baseline
+below; the new combined main-branch check is not yet active there.
+
+Use Node.js 22, matching CI. From a fresh checkout of the candidate branch:
 
 ```sh
 npm ci
@@ -25,9 +30,10 @@ npm test
 ```
 
 `npm test` runs FireWatch contract tests, FireSim contract tests, and mock
-integration tests in one command. The main-branch and pull-request CI job
-**FireWatch and FireSim Tests** runs the same `npm ci` and `npm test` commands
-against the checkout under test. No feature-branch refs or fetches are required.
+integration tests in one command. In PR #30, the **FireWatch and FireSim Tests**
+job runs the same `npm ci` and `npm test` commands on pull requests and is
+configured for pushes to main after merge. No feature-branch refs or fetches
+are required by this candidate verification path.
 See [verification details](src/integrations/README.md) for focused suite commands.
 
 Recorded evidence (October 30, 2026; commit-specific, not a current-main claim):
@@ -35,7 +41,8 @@ Recorded evidence (October 30, 2026; commit-specific, not a current-main claim):
 | Baseline | Verified scope |
 | --- | --- |
 | Main `3739515` | 44 passing tests: 10 FireWatch + 4 FireSim + 30 integration. Runtime intake schema enforcement missing. |
-| Separate PR [#29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9` | 49 passing tests, including five provisional runtime intake regressions. Unmerged at this evidence cutoff. |
+| Separate PR [#29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9` | Open and unmerged, without a submitted review. 49 passing tests include five provisional runtime intake regressions. |
+| Verification PR [#30](https://github.com/AaryakPawar/fire-control/pull/30), verification implementation `db174df` | Open and unmerged. 44 tests pass with `npm ci` / `npm test` on Node 22; all three PR checks pass. Its main CI activation awaits merge. |
 | Actual FireWatch compatibility | Still unverified. Passing provisional contract/mock tests does not prove upstream compatibility. |
 
 This verification change unifies the command and CI scope; it does not merge
@@ -179,7 +186,13 @@ https://github.com/AaryakPawar/fire-control/issues
 
 ---
 
-## Technology Stack
+## Proposed application stack and implemented foundations
+
+The contract/mock foundation currently uses JavaScript modules, Node.js's native
+test runner, JSON Schema, Ajv/ajv-formats and GitHub Actions. The application UI,
+API, database and deployment choices below remain proposed unless specifically
+identified as current. Their presence in this table does not imply installation,
+a running application, or deployed behavior.
 
 | Area | Technology | Purpose |
 |---|---|---|
@@ -188,7 +201,7 @@ https://github.com/AaryakPawar/fire-control/issues
 | Database | PostgreSQL + Prisma | Response plans, commands, operational status, and audit history |
 | Asynchronous Messaging | NATS | Publish/subscribe communication between Fire Force Six subsystems |
 | API / Message Contracts | OpenAPI + JSON Schema | Define and validate REST interfaces and message payloads |
-| Unit Testing | Vitest / Jest | Unit-level verification |
+| Unit Testing | Node.js test runner (current); Vitest / Jest (proposed alternatives) | Contract/mock verification now; possible future application tests |
 | API Testing | Supertest | Backend/API verification |
 | UI / End-to-End Testing | Playwright | End-to-end operator workflow testing |
 | Containerization | Docker | Repeatable development and testing environments |
@@ -196,7 +209,14 @@ https://github.com/AaryakPawar/fire-control/issues
 | Frontend Deployment | Vercel | Planned frontend deployment |
 | Backend Deployment | Render | Planned backend/API deployment |
 
-The exact external message formats, NATS topics, REST interfaces, and shared status models may be refined as the Fire Force Six teams coordinate their integration requirements.
+FireWatch has confirmed full `PerceptionSnapshot` v1.0.0 messages on NATS subject
+`firewatch.v1.perceptions`, with its publisher planned for November 22, 2026.
+FireControl's `IncidentSnapshot` schema is a provisional internal/mock model.
+The proposed Part C subscriber/cache must adapt upstream data; incident identity,
+severity and coordinate-to-zone mapping remain unresolved. Actual compatibility
+is unverified. FireWatch's `/twin` is an internal/debug endpoint, not an intake
+contract, and no latest-snapshot REST endpoint is currently promised. FireSim's
+transport and shared execution guarantees remain provisional.
 
 ---
 
@@ -309,22 +329,64 @@ Both team members will contribute to:
 
 ---
 
-## Project Status
+## Project Status — Part B baseline
 
-**Current Phase:** Part A — Concept Proposal & Initial Backlog
+**Current phase:** Part B analysis, architecture, design and documented
+contract/mock implementation progress. Status snapshot: October 30, 2026.
+These are source and process observations, not overall product completion.
 
-### Completed
+### Implemented on main
 
-- FireControl concept finalized
-- primary user and unmet need identified
-- MVP scope defined
-- technology stack proposed
-- integration approach identified
-- feasibility analyzed
-- team responsibilities defined
-- seven GitHub Epics created
-- high-level user stories added to each Epic
+Main `3739515` contains the merged FireWatch/FireSim schemas, fixtures and mock
+adapters from PRs #26–#28. The combined local baseline has **44 passing tests**
+(10 FireWatch, 4 FireSim, 30 integration). Main still lacks runtime FireWatch
+intake schema enforcement. A passing standalone schema test does not establish
+validation at the adapter boundary.
 
-### Next Phase
+### Open changes and limitations
 
-Implementation and backlog refinement will continue through subsequent project phases as Fire Force Six subsystem interfaces are coordinated across teams.
+- [PR #29](https://github.com/AaryakPawar/fire-control/pull/29), `82875e9`: runtime
+  validation against the provisional internal model and five adapter-intake
+  regressions; **49 tests pass on that branch**. It is open, unmerged and without
+  a submitted review at this cutoff.
+- [PR #30](https://github.com/AaryakPawar/fire-control/pull/30), verification implementation
+  `db174df`: combined verification command and reproducible CI installation;
+  **44 tests and all three PR checks pass**. It remains open and unmerged. This
+  candidate README update does not make the workflow active on main.
+- Operator UI, plan editing, business validation/approval, durable submission,
+  persistence/audit and live integrations remain proposed or backlog work.
+- Actual FireWatch and FireSim compatibility remains unverified. Mock behavior
+  does not demonstrate deployment or completion of the operator workflow.
+
+### Story acceptance and Scrum state
+
+| Story | State | Acceptance basis / remaining work |
+| --- | --- | --- |
+| [#11 — FireWatch intake](https://github.com/AaryakPawar/fire-control/issues/11) | Open / In Review | Reopened while #29's runtime repair, review, merged verification and explicit acceptance remain pending. |
+| [#12 — FireSim contracts](https://github.com/AaryakPawar/fire-control/issues/12) | Closed / Done | Acceptance recorded against its six contract-story criteria: request/status definitions, required fields/enums/correlation, identifiable validation errors, valid/invalid fixtures and standalone testing. |
+| [#13 — Mock integrations](https://github.com/AaryakPawar/fire-control/issues/13) | Closed / Done | Completed mock foundation via merged #28; interface-neutral demo progression remains follow-up work. |
+
+The current inventory is **7 open epics and 15 stories: 13 open, 2 closed**.
+The [Scrum board](https://github.com/users/AaryakPawar/projects/1) contains all
+22 epic/story issues: **19 Backlog, 0 Ready, 0 In Progress, 1 In Review, 2 Done**.
+Future sprint selection does not move a story out of Backlog or imply completion.
+Missing peer review on PR #27 remains a process limitation; external FireSim
+compatibility and actual submission/status services are outside #12's contract
+story scope.
+
+### Delivery plan recorded October 30
+
+| Milestone | Planning window, 2026 | Stories | Owners |
+| --- | --- | --- | --- |
+| [Sprint 1 — Contracts & Architecture](https://github.com/AaryakPawar/fire-control/milestone/1) | October 2–30 | #11–#13 | Aaryak |
+| [Sprint 2 — Incident UI & Intake](https://github.com/AaryakPawar/fire-control/milestone/2) | October 30–November 6 | #14–#15 | Jamal |
+| [Sprint 3 — Plan Builder & Approval](https://github.com/AaryakPawar/fire-control/milestone/3) | November 7–13 | #16–#19 | Jamal: #16–17; Aaryak: #18–19 |
+| [Sprint 4 — Submission, Status & Audit](https://github.com/AaryakPawar/fire-control/milestone/4) | November 14–20 | #20–#23 | Aaryak: #20–22; Jamal: #23 |
+| [Sprint 5 — Workflow Verification & Demo](https://github.com/AaryakPawar/fire-control/milestone/5) | November 21–28 | #24–#25 | Aaryak: #24; Jamal: #25 |
+
+Each milestone records its goal, dependencies and acceptance evidence. Sprint 1's
+end date and the future plan were documented on October 30; no earlier planning
+record or historical completion is implied. Live FireWatch adaptation remains
+conditional Part C work, with a mock-backed demo fallback if the publisher is
+unavailable. Refresh this snapshot before submission if code, review or process
+state changes.
