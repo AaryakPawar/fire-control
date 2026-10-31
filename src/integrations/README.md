@@ -48,3 +48,20 @@ The shared `validateIncidentSnapshot` function is available for future real
 adapters; this change does not implement a real FireWatch transport. The schema
 remains provisional as documented in CONTRACT_ASSUMPTIONS.md. File I/O and JSON
 syntax errors retain their native errors. Ajv packages are runtime dependencies.
+
+## Submitted Part B design-to-code mapping
+
+At the submitted baseline `6649391`, the design port operation `submit(request)`
+maps to `MockFireSimAdapter.submitCommand(request)`, and `lookup(requestId)` maps
+to `MockFireSimAdapter.getCommandStatus(requestId)`. The adapter factory checks
+the implemented method names. The conceptual port names in the report are not
+implemented aliases. This mapping documents the baseline; it does not rename
+methods or implement the proposed durable application services.
+
+`advanceCommand(requestId)` is a mock-only simulation control. Calling
+`getCommandStatus(requestId)` reads the current observation without advancing
+execution. A future application port wrapper must preserve this distinction.
+
+Related scope: #13 (mock foundation), #22 (future status service), and #24
+(future workflow verification). Actual FireWatch NATS adaptation remains Part C
+work; passing the provisional contract/mock suite does not prove live compatibility.
